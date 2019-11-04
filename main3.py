@@ -38,6 +38,15 @@ class Window(QWidget):
         self.btnClear = QToolButton()
         self.btnClear.setText('Clear')
         self.btnClear.clicked.connect(self.clear)
+        '''
+        test_layout = QHBoxLayout()
+        self.test = QRadioButton("test")
+        self.test.setChecked(True)
+        self.test.setEnabled(True)
+        test_layout.addWidget(self.test)
+        #test_group = QGroupBox()
+        #test_group.setLayout(test_layout)
+        '''
 
 
         #instruments panel
@@ -48,12 +57,15 @@ class Window(QWidget):
         instrument_layout.addWidget(self.threshold)
         instrument_layout.addWidget(self.brush_size_box)
         instrument_layout.addWidget(self.btnClear)
+        #instrument_layout.addLayout(test_layout)
         instrument_layout.addStretch(10000) #-------------------------------------  button place
+
 
         # Arrange layout
         VBlayout = QVBoxLayout()
         VBlayout.addLayout(instrument_layout)
         VBlayout.addWidget(self.viewer)
+
         
         self.setLayout(VBlayout)
 
@@ -79,4 +91,21 @@ if __name__ == '__main__':
     window = Window()
     window.showMaximized()
     sys.exit(app.exec_())
+'''
 
+import numpy as np
+import cv2, time
+
+start = time.time()
+img = cv2.imread('IMG_1942.jpeg')
+mask = np.zeros(img.shape[:2],np.uint8)
+bgdModel = np.zeros((1,65),np.float64)
+fgdModel = np.zeros((1,65),np.float64)
+rect = (738, 384, 932, 612)
+cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
+mask2 = np.where((mask==2)|(mask==0), 0, 1).astype('uint8')
+img = img*mask2[:,:,np.newaxis]
+#cv2.rectangle(img, (738, 384), (932, 612), (255, 255, 255), 2)
+cv2.imwrite('test.png', img)
+print(time.time() - start)
+'''

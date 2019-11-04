@@ -22,6 +22,7 @@ class PhotoViewer(BaseViewer):
             if self.image is not None:
                 cursor_coord_x, cursor_coord_y = self.widget_to_img_pos(event.pos().x(), event.pos().y())
                 start_point = (cursor_coord_x, cursor_coord_y)
+                print(start_point)
                 gray_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
                 #mask = np.zeros(self.image_orig.shape, dtype=np.uint8) # is it need?
                 start_pixel = gray_image[cursor_coord_y][cursor_coord_x]
