@@ -16,10 +16,15 @@ class Window(QWidget):
 
         self.viewer = DoubleViewer(self)
         self.viewer.setUpdatesEnabled(True)
+
         # 'Load image' button
         self.btnLoad = QToolButton()
         self.btnLoad.setText('Load image')
         self.btnLoad.clicked.connect(self.loadImage)
+
+        self.btnClear = QToolButton()
+        self.btnClear.setText('Clear')
+        self.btnClear.clicked.connect(self.clear)
 
         self.radio_image = QRadioButton("One object")
         self.radio_image.setChecked(True)
@@ -28,47 +33,103 @@ class Window(QWidget):
         self.radio_image_all.setChecked(False)
         self.radio_image_all.setEnabled(True)
 
-        self.brush_size_box = QSpinBox()
-        self.brush_size_box.setMinimum(1)
-        self.brush_size_box.setMaximum(255)
-        self.brush_size_box.setValue(30)
-        self.threshold = QLabel("    Threshold:")
+        select_wand = QHBoxLayout()
+        select_wand.addWidget(self.radio_image)
+        select_wand.addWidget(self.radio_image_all)
+        wand_group = QGroupBox("Select wand")
+        wand_group.setLayout(select_wand)
+
+        # tools group
+        self.show_feather_edges = QLabel("Feather edges:")
+
+        #line_00 = QFrame()
+        #line_00.setFrameShape(QFrame.VLine)
+
+        #self.show_smooth_edges = QLabel("Smooth edges:")
+
+        #self.smooth_edges = QCheckBox()
+
+        line_01 = QFrame()
+        line_01.setFrameShape(QFrame.VLine)
+
+        self.threshold = QSpinBox()
+        self.threshold.setMinimum(1)
+        self.threshold.setMaximum(255)
+        self.threshold.setValue(30)
+
+        threshold = QHBoxLayout()
+        threshold.addWidget(QLabel("Threshold: "))
+        threshold.addWidget(self.threshold)
+
+        line_02 = QFrame()
+        line_02.setFrameShape(QFrame.VLine)
+
+        self.replace = QRadioButton("Replace")
+        self.add = QRadioButton("Add")
+        self.add.setChecked(True)
+        self.substract = QRadioButton("Subtract")
+        self.intersect = QRadioButton("Intersect")
+
+        fuzzy_modes = QHBoxLayout()
+        fuzzy_modes.addWidget(QLabel("Mode: "))
+        fuzzy_modes.addWidget(self.replace)
+        fuzzy_modes.addWidget(self.add)
+        fuzzy_modes.addWidget(self.substract)
+        fuzzy_modes.addWidget(self.intersect)
+
+        line_03 = QFrame()
+        line_03.setFrameShape(QFrame.VLine)
 
 
-        self.btnClear = QToolButton()
-        self.btnClear.setText('Clear')
-        self.btnClear.clicked.connect(self.clear)
-        '''
-        test_layout = QHBoxLayout()
-        self.test = QRadioButton("test")
-        self.test.setChecked(True)
-        self.test.setEnabled(True)
-        test_layout.addWidget(self.test)
-        #test_group = QGroupBox()
-        #test_group.setLayout(test_layout)
-        '''
+        self.feather_edges = QSpinBox()
+        self.feather_edges.setMinimum(1)
+        self.feather_edges.setMaximum(33)
+        self.feather_edges.setValue(1)
+        self.feather_edges.setDisabled(True)
+        self.feather_edges.setDisabled(False)
 
 
-        #instruments panel
+        tool_options = QHBoxLayout()
+        #trimap_layout.addWidget(self.show_smooth_edges)
+        #trimap_layout.addWidget(self.smooth_edges)
+        #trimap_layout.addWidget(line_00)
+        tool_options.addWidget(self.show_feather_edges)
+        tool_options.addWidget(self.feather_edges)
+        tool_options.addWidget(line_01)
+        tool_options.addLayout(threshold)
+        tool_options.addWidget(line_02)
+        tool_options.addLayout(fuzzy_modes)
+        tool_options.addWidget(line_03)
+        tool_options.addWidget(self.btnClear)
+
+        trimap_group = QGroupBox("Tool options")
+        trimap_group.setLayout(tool_options)
+
+
+        self.selection_criterion = QComboBox(self)
+        self.selection_criterion.addItems(['composite', 'green', 'red', 'blue', 'hue', 'saturation', 'value'])
+
+
+        predict_layout = QHBoxLayout()
+        predict_layout.addWidget(self.selection_criterion)
+        predict_group = QGroupBox("Selection criterion")
+        predict_group.setLayout(predict_layout)
+
+
+        # instruments panel
         instrument_layout = QHBoxLayout()
+        instrument_layout.addWidget(wand_group)
+        instrument_layout.addWidget(trimap_group)
+        instrument_layout.addWidget(predict_group)
         instrument_layout.addWidget(self.btnLoad)
-        instrument_layout.addWidget(self.radio_image)
-        instrument_layout.addWidget(self.radio_image_all)
-        instrument_layout.addWidget(self.threshold)
-        instrument_layout.addWidget(self.brush_size_box)
-        instrument_layout.addWidget(self.btnClear)
-        #instrument_layout.addLayout(test_layout)
-        instrument_layout.addStretch(10000) #-------------------------------------  button place
-
+        instrument_layout.addStretch(10000)
 
         # Arrange layout
         VBlayout = QVBoxLayout()
         VBlayout.addLayout(instrument_layout)
         VBlayout.addWidget(self.viewer)
 
-        
         self.setLayout(VBlayout)
-
 
     def loadImage(self):
         new_image_path = QFileDialog.getOpenFileName(self, "Pick an image")[0]

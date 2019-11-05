@@ -27,3 +27,5 @@ class DoubleViewer(QLabel):
 
 
 
+
+
