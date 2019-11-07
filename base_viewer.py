@@ -107,12 +107,13 @@ class BaseViewer(QLabel):
         self.image_name = image_name
         self.image = image
         self.image_orig = image.copy()
+        self.test = image
         self.count_hw_pos(-5, 0, 0) # init fields
 
 
     def updatePhoto(self, image):
         self.image = image
-        self.image_orig = image.copy()
+        #self.image_orig = image.copy()
         self.count_hw_pos(-5, 0, 0) # init fields
 
 

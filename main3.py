@@ -152,8 +152,8 @@ if __name__ == '__main__':
     window = Window()
     window.showMaximized()
     sys.exit(app.exec_())
-'''
 
+'''
 import numpy as np
 import cv2, time
 
@@ -170,3 +170,4 @@ img = img*mask2[:,:,np.newaxis]
 cv2.imwrite('test.png', img)
 print(time.time() - start)
 '''
+
