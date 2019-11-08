@@ -84,7 +84,7 @@ class Window(QWidget):
         self.feather_edges = QSpinBox()
         self.feather_edges.setMinimum(1)
         self.feather_edges.setMaximum(33)
-        self.feather_edges.setValue(1)
+        self.feather_edges.setValue(21)
         self.feather_edges.setDisabled(True)
         self.feather_edges.setDisabled(False)
 
@@ -140,8 +140,15 @@ class Window(QWidget):
             self.viewer.update()
 
     def clear(self):
-        self.viewer.setPhoto(utils.load_image(self.image_path))
-        self.viewer.update()
+        if self.image_path is None:
+            image_path = QMessageBox()
+            image_path.setIcon(QMessageBox.Critical)
+            image_path.setWindowTitle("Warning")
+            image_path.setText("Please, choise the image!")
+            image_path.exec_()
+        else:
+            self.viewer.setPhoto(utils.load_image(self.image_path))
+            self.viewer.update()
 
 
 
@@ -169,5 +176,10 @@ img = img*mask2[:,:,np.newaxis]
 #cv2.rectangle(img, (738, 384), (932, 612), (255, 255, 255), 2)
 cv2.imwrite('test.png', img)
 print(time.time() - start)
+
+import numpy as np
+import cv2, time
+img = cv2.imread("HLS.png")
+imgHLS = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
 '''
 
