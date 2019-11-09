@@ -42,12 +42,11 @@ class Window(QWidget):
         # tools group
         self.show_feather_edges = QLabel("Feather edges:")
 
-        #line_00 = QFrame()
-        #line_00.setFrameShape(QFrame.VLine)
-
-        #self.show_smooth_edges = QLabel("Smooth edges:")
-
-        #self.smooth_edges = QCheckBox()
+        line_00 = QFrame()
+        line_00.setFrameShape(QFrame.VLine)
+        self.show_smooth_edges = QLabel("Antialiasing:")
+        self.smooth_edges = QCheckBox()
+        self.smooth_edges.setChecked(True)
 
         line_01 = QFrame()
         line_01.setFrameShape(QFrame.VLine)
@@ -90,9 +89,9 @@ class Window(QWidget):
 
 
         tool_options = QHBoxLayout()
-        #trimap_layout.addWidget(self.show_smooth_edges)
-        #trimap_layout.addWidget(self.smooth_edges)
-        #trimap_layout.addWidget(line_00)
+        tool_options.addWidget(self.show_smooth_edges)
+        tool_options.addWidget(self.smooth_edges)
+        tool_options.addWidget(line_00)
         tool_options.addWidget(self.show_feather_edges)
         tool_options.addWidget(self.feather_edges)
         tool_options.addWidget(line_01)
@@ -107,7 +106,7 @@ class Window(QWidget):
 
 
         self.selection_criterion = QComboBox(self)
-        self.selection_criterion.addItems(['composite', 'green', 'red', 'blue', 'hue', 'saturation', 'value'])
+        self.selection_criterion.addItems(['composite', 'red', 'green', 'blue', 'hue', 'lightness', 'saturation'])
 
 
         predict_layout = QHBoxLayout()
@@ -179,7 +178,13 @@ print(time.time() - start)
 
 import numpy as np
 import cv2, time
-img = cv2.imread("HLS.png")
+img = cv2.imread("IMG_1942.jpeg")
 imgHLS = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+print(imgHLS.shape)
+Lchannel = imgHLS[:,:,1]
+cv2.imwrite('light.png', Lchannel)
+Hchannel = imgHLS[:,:,0]
+cv2.imwrite('hue.png', Hchannel)
+Schannel = imgHLS[:,:,2]
+cv2.imwrite('satur.png', Schannel)
 '''
-
