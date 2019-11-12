@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+message Mask {
+    bytes image = 1;
+    int32 x = 2;
+    int32 y = 3;
+    bool wand = 4;
+    bool antialiasing = 5;
+    int32 edges = 6;
+    int32 threshold = 7;
+    int32 mode = 8;
+    string criterion = 9;
+    int32 shape0 = 10;
+    int32 shape1 = 11;
+    int32 shape2 = 12;
+}
+
+
+message ResultMask {
+  bytes image = 1;
+}
+
+service magic_wand {
+    rpc find_mask(Mask) returns (ResultMask) {}
+}
