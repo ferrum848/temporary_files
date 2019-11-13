@@ -18,7 +18,7 @@ class magic_wandServicer(wand_pb2_grpc.magic_wandServicer):
     # calculator_pb2.Number
     def find_mask(self, request, context):
         response = wand_pb2.ResultMask()
-        response.image = main_function.main_function(request.image)
+        response.image, response.mask = main_function.main_function(request.image, request.x, request.y, request.wand, request.antialiasing, request.edges, request.threshold, request.mode, request.criterion, request.shape0, request.shape1, request.shape2, request.mask)
         return response
 
 

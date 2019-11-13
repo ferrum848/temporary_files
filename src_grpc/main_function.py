@@ -61,46 +61,29 @@ def choise_selection_mask(image, selection_criterion):
             gray_image = temp_image[:, :, 2]
     return gray_image
 
-#def main_function(image, cursor_coord_x, cursor_coord_y, wand, antialiasing, edges, threshold, mode, criterion, shape0, shape1, shape2):
-def main_function(image):
-    image = np.frombuffer(image, dtype=np.uint8).reshape(shape0, shape1, shape2)
-    start_point = (cursor_coord_x, cursor_coord_y)
-    FLAG = 0
-    #mask = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
-    if mode == 1:
-        mask = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
-        #self.window.clear()
-    if mode == 2:
-        #self.image = self.image_orig.copy()
-        if FLAG == 0:
-            mask = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
-            FLAG += 1
 
+
+
+def main_function(image, cursor_coord_x, cursor_coord_y, wand, antialiasing, edges, threshold, mode, criterion, shape0, shape1, shape2, mask):
+    image = np.frombuffer(image, dtype=np.uint8).reshape(shape0, shape1, shape2)
+    mask = np.frombuffer(mask, dtype=np.uint8).reshape(shape0, shape1)
+    start_point = (cursor_coord_x, cursor_coord_y)
     gray_image = choise_selection_mask(image, criterion)
 
     if wand == 1:
         all_contours, contour = find_countur_of_threshold(start_point, gray_image, edges, threshold)
-        if mode == 3 and mask is not None:
-            #self.window.clear()
+        if mode == 3:
             mask_substract = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
             cv2.fillPoly(mask_substract, [contour], (1, 1, 1))
-            mask += mask_substract
+            mask = mask + mask_substract
             mask = np.where(mask > 1, mask, 0)
 
-        elif mode == 4 and mask is not None:
-            #self.window.clear()
+        elif mode == 4:
             mask_substract = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
             cv2.fillPoly(mask_substract, [contour], (2, 2, 2))
-            mask += mask_substract
+            mask = mask + mask_substract
             mask = np.where(mask < 2, mask, 0)
             mask *= 255
-
-        #elif mask is None:
-            #msg = QMessageBox()
-            #msg.setIcon(QMessageBox.Critical)
-            #msg.setWindowTitle("Warning")
-            #msg.setText("Please, choise the area on image!")
-            #msg.exec_()
 
         else:
             for cnt in all_contours:
@@ -111,29 +94,21 @@ def main_function(image):
 
     else:
         contours = find_all_counturs_of_threshold(start_point, gray_image, edges, threshold)
-        if mode == 3 and mask is not None:
-            #self.window.clear()
+        if mode == 3:
             mask_substract = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
             for contour in contours[1]:
                 cv2.fillPoly(mask_substract, [contour], (1, 1, 1))
-            mask += mask_substract
+            mask = mask + mask_substract
             mask = np.where(mask > 1, mask, 0)
 
-        elif mode == 4 and mask is not None:
-            #self.window.clear()
+        elif mode == 4:
             mask_substract = np.zeros((image.shape[0], image.shape[1]), dtype=np.uint8)
             for contour in contours[1]:
                 cv2.fillPoly(mask_substract, [contour], (2, 2, 2))
-            mask += mask_substract
+            mask = mask + mask_substract
             mask = np.where(mask < 2, mask, 0)
             mask *= 255
 
-        #elif self.mask is None:
-            #msg = QMessageBox()
-            #msg.setIcon(QMessageBox.Critical)
-            #msg.setWindowTitle("Warning")
-            #msg.setText("Please, choise the area on image!")
-            #msg.exec_()
         else:
             for contour in contours[1]:
                 cv2.fillPoly(mask, np.int32([contour]), (255, 255, 255))
@@ -146,4 +121,5 @@ def main_function(image):
         else:
             cv2.drawContours(image, [contour_from_mask], -1, (0, 255, 0), 1)
     image = image.tobytes()
-    return image
+    mask = mask.tobytes()
+    return image, mask

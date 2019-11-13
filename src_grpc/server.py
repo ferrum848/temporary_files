@@ -18,7 +18,7 @@ class CalculatorServicer(calculator_pb2_grpc.CalculatorServicer):
     # generated as calculator_pb2.Number
     def SquareRoot(self, request, context):
         response = calculator_pb2.Test()
-        response.value = calculator.square_root(request.value)
+        response.value, response.val = calculator.square_root(request.value, request.test)
         return response
 
 

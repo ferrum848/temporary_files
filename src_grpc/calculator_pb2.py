@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='calculator.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\x10\x63\x61lculator.proto\"%\n\x06Number\x12\r\n\x05value\x18\x01 \x01(\x02\x12\x0c\n\x04test\x18\x02 \x01(\x05\"\x15\n\x04Test\x12\r\n\x05value\x18\x01 \x01(\x02\x32,\n\nCalculator\x12\x1e\n\nSquareRoot\x12\x07.Number\x1a\x05.Test\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\x10\x63\x61lculator.proto\"%\n\x06Number\x12\r\n\x05value\x18\x01 \x01(\x02\x12\x0c\n\x04test\x18\x02 \x01(\x05\"\"\n\x04Test\x12\r\n\x05value\x18\x01 \x01(\x02\x12\x0b\n\x03val\x18\x02 \x01(\x02\x32,\n\nCalculator\x12\x1e\n\nSquareRoot\x12\x07.Number\x1a\x05.Test\"\x00\x62\x06proto3')
 )
 
 
@@ -77,6 +77,13 @@ _TEST = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='val', full_name='Test.val', index=1,
+      number=2, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -90,7 +97,7 @@ _TEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=59,
-  serialized_end=80,
+  serialized_end=93,
 )
 
 DESCRIPTOR.message_types_by_name['Number'] = _NUMBER
@@ -119,8 +126,8 @@ _CALCULATOR = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=82,
-  serialized_end=126,
+  serialized_start=95,
+  serialized_end=139,
   methods=[
   _descriptor.MethodDescriptor(
     name='SquareRoot',

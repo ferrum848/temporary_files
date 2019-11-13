@@ -13,11 +13,13 @@ message Mask {
     int32 shape0 = 10;
     int32 shape1 = 11;
     int32 shape2 = 12;
+    bytes mask = 13;
 }
 
 
 message ResultMask {
   bytes image = 1;
+  bytes mask = 2;
 }
 
 service magic_wand {

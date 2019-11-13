@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='wand.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n\nwand.proto\"\xc2\x01\n\x04Mask\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\t\n\x01x\x18\x02 \x01(\x05\x12\t\n\x01y\x18\x03 \x01(\x05\x12\x0c\n\x04wand\x18\x04 \x01(\x08\x12\x14\n\x0c\x61ntialiasing\x18\x05 \x01(\x08\x12\r\n\x05\x65\x64ges\x18\x06 \x01(\x05\x12\x11\n\tthreshold\x18\x07 \x01(\x05\x12\x0c\n\x04mode\x18\x08 \x01(\x05\x12\x11\n\tcriterion\x18\t \x01(\t\x12\x0e\n\x06shape0\x18\n \x01(\x05\x12\x0e\n\x06shape1\x18\x0b \x01(\x05\x12\x0e\n\x06shape2\x18\x0c \x01(\x05\"\x1b\n\nResultMask\x12\r\n\x05image\x18\x01 \x01(\x0c\x32/\n\nmagic_wand\x12!\n\tfind_mask\x12\x05.Mask\x1a\x0b.ResultMask\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n\nwand.proto\"\xd0\x01\n\x04Mask\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\t\n\x01x\x18\x02 \x01(\x05\x12\t\n\x01y\x18\x03 \x01(\x05\x12\x0c\n\x04wand\x18\x04 \x01(\x08\x12\x14\n\x0c\x61ntialiasing\x18\x05 \x01(\x08\x12\r\n\x05\x65\x64ges\x18\x06 \x01(\x05\x12\x11\n\tthreshold\x18\x07 \x01(\x05\x12\x0c\n\x04mode\x18\x08 \x01(\x05\x12\x11\n\tcriterion\x18\t \x01(\t\x12\x0e\n\x06shape0\x18\n \x01(\x05\x12\x0e\n\x06shape1\x18\x0b \x01(\x05\x12\x0e\n\x06shape2\x18\x0c \x01(\x05\x12\x0c\n\x04mask\x18\r \x01(\x0c\")\n\nResultMask\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x0c\n\x04mask\x18\x02 \x01(\x0c\x32/\n\nmagic_wand\x12!\n\tfind_mask\x12\x05.Mask\x1a\x0b.ResultMask\"\x00\x62\x06proto3')
 )
 
 
@@ -116,6 +116,13 @@ _MASK = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mask', full_name='Mask.mask', index=12,
+      number=13, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -129,7 +136,7 @@ _MASK = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=15,
-  serialized_end=209,
+  serialized_end=223,
 )
 
 
@@ -147,6 +154,13 @@ _RESULTMASK = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mask', full_name='ResultMask.mask', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -159,8 +173,8 @@ _RESULTMASK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=211,
-  serialized_end=238,
+  serialized_start=225,
+  serialized_end=266,
 )
 
 DESCRIPTOR.message_types_by_name['Mask'] = _MASK
@@ -189,8 +203,8 @@ _MAGIC_WAND = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=240,
-  serialized_end=287,
+  serialized_start=268,
+  serialized_end=315,
   methods=[
   _descriptor.MethodDescriptor(
     name='find_mask',
