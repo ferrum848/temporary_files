@@ -13,7 +13,8 @@ class Window(QWidget):
         super(Window, self).__init__()
 
         self.image_path = None
-        self.transp = 50
+        self.transp = 10
+        self.number_of_parts = 3
 
         self.viewer = DoubleViewer(self)
         self.viewer.setUpdatesEnabled(True)
@@ -180,14 +181,22 @@ class Window(QWidget):
 
 
     def show_boundary(self):
-        pass
+        if self.image_path is None:
+            pass
+        else:
+            self.viewer.setPhoto(utils.load_image(self.image_path))
+            self.viewer.update()
 
 
     def reduce_bound(self):
-        pass
+        if self.number_of_parts > 1:
+                self.number_of_parts -= 1
+                self.show_boundary()
+
 
     def increase_bound(self):
-        pass
+        self.number_of_parts += 1
+        self.show_boundary()
 
 
     def undo(self):
@@ -206,44 +215,38 @@ if __name__ == '__main__':
     window.showMaximized()
     sys.exit(app.exec_())
 
+
 '''
-import numpy as np
-import cv2, time
-
-start = time.time()
-img = cv2.imread('IMG_1942.jpeg')
-mask = np.zeros(img.shape[:2],np.uint8)
-bgdModel = np.zeros((1,65),np.float64)
-fgdModel = np.zeros((1,65),np.float64)
-rect = (738, 384, 932, 612)
-cv2.grabCut(img,mask,rect,bgdModel,fgdModel,5,cv2.GC_INIT_WITH_RECT)
-mask2 = np.where((mask==2)|(mask==0), 0, 1).astype('uint8')
-img = img*mask2[:,:,np.newaxis]
-#cv2.rectangle(img, (738, 384), (932, 612), (255, 255, 255), 2)
-cv2.imwrite('test.png', img)
-print(time.time() - start)
-
-import numpy as np
-import cv2, time
-img = cv2.imread("IMG_1942.jpeg")
-imgHLS = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
-print(imgHLS.shape)
-Lchannel = imgHLS[:,:,1]
-cv2.imwrite('light.png', Lchannel)
-Hchannel = imgHLS[:,:,0]
-cv2.imwrite('hue.png', Hchannel)
-Schannel = imgHLS[:,:,2]
-cv2.imwrite('satur.png', Schannel)
 
 
 import numpy as np
 import cv2
 
-img = cv2.imread("IMG_1942.jpeg")
-print(img.shape, img.dtype)
-b = img.tobytes()
-res = np.frombuffer(b, dtype = np.uint8)
-res = res.reshape(800, 1067, 3)
-print(res.shape)
-print(np.array_equal(res, img))
+
+def boundary(image, number_of_parts):
+    gray = cv2.imread("IMG_1942.jpeg", 0)
+    gray_image = cv2.medianBlur(gray, 21)
+    x, y = gray_image.shape[0] // number_of_parts, gray_image.shape[1] // number_of_parts
+    n = 0
+    for i in range(number_of_parts):
+        for j in range(number_of_parts):
+            im = gray_image[x*i:x*(i+1), y*j:y*(j+1)]
+            print(im.shape)
+            #cv2.imwrite('test/a{}.png'.format(n), im)
+            ret, thresh1 = cv2.threshold(im, np.mean(int(round(np.mean(im)))), 255, cv2.THRESH_BINARY)
+            #cv2.imwrite('test/a{}.png'.format(n), thresh1)
+            contours = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(image[x*i:x*(i+1), y*j:y*(j+1)], contours[1], -1, (0, 255, 0), 1)
+            thresh1 = np.where(thresh1 == 255, thresh1, 111)  # 0 -> 111
+            thresh1 = np.where(thresh1 != 255, thresh1, 0) # 255 -> 0
+            thresh1 = np.where(thresh1 != 111, thresh1, 255)
+            contours = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(image[x * i:x * (i + 1), y * j:y * (j + 1)], contours[1], -1, (0, 255, 0), 1)
+            n += 1
+    cv2.imwrite('test/im.png', image)
+
+image = cv2.imread("IMG_1942.jpeg")
+number_of_parts = 25
+boundary(image, number_of_parts)
 '''
+

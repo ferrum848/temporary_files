@@ -18,29 +18,25 @@ class PhotoViewer(BaseViewer):
         self.mask = None
 
 
+    #def enterEvent(self, event):
+        #cursor_coord_x, cursor_coord_y = self.widget_to_img_pos(event.pos().x(), event.pos().y())
+        #start_point = (cursor_coord_x, cursor_coord_y)
+        #print(start_point)
+
+
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         if event.buttons() == Qt.LeftButton:
             if self.image is not None:
                 cursor_coord_x, cursor_coord_y = self.widget_to_img_pos(event.pos().x(), event.pos().y())
                 start_point = (cursor_coord_x, cursor_coord_y)
+                print(start_point)
                 #============================================================================================
-                if self.window.radio_image.isChecked():
-                    wand = 1
-                else:
-                    wand = 0
-                if self.window.smooth_edges.isChecked():
-                    antialiasing = 1
-                else:
-                    antialiasing = 0
-                edges = 21
-                threshold = 30
-                mode = 2
-                criterion = self.window.selection_criterion.currentText()
-                image_bytes = self.image.tobytes()
-                shape0, shape1, shape2 = self.image.shape
-                result_image_bytes = main_function(image_bytes, cursor_coord_x, cursor_coord_y, wand, antialiasing, edges, threshold, mode, criterion, shape0, shape1, shape2)
-                self.image = np.frombuffer(result_image_bytes, dtype = np.uint8).reshape(self.image.shape)
+
+                #image_bytes = self.image.tobytes()
+                #shape0, shape1, shape2 = self.image.shape
+                #result_image_bytes = main_function(image_bytes, cursor_coord_x, cursor_coord_y, wand, antialiasing, edges, threshold, mode, criterion, shape0, shape1, shape2)
+                #self.image = np.frombuffer(result_image_bytes, dtype = np.uint8).reshape(self.image.shape)
                 # ============================================================================================
                 try:
 
