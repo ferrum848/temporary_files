@@ -4,9 +4,9 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import numpy as np
-
 import utils
 import math
+import skimage.segmentation as seg
 
 
 class BaseViewer(QLabel):
@@ -121,22 +121,19 @@ class BaseViewer(QLabel):
         self.zoom_changed.emit(self.zoom_hw, self.pos_00)
 
 
-    def setPhoto(self, image, image_name = None, start_photo = None):
-        self.start_photo = start_photo
-        self.image_name = image_name
+    def setPhoto(self, image):
         self.image = image
         self.image_orig = image
-        self.FLAG = 0
         self.background = np.zeros(self.image.shape, dtype=np.uint8)
         self.image_trimap = np.ones(self.image.shape, dtype=np.uint8) * 255
-        self.boundary()
         self.contruct_visualization_image()
         self.count_hw_pos(-5, 0, 0) # init fields
 
 
     def updatePhoto(self, image):
         self.image = image
-        self.count_hw_pos(-5, 0, 0) # init fields
+        self.contruct_visualization_image()
+        self.count_hw_pos(-5, 0, 0)  # init fields
 
 
     def widget_to_img_pos(self, r, c):
@@ -178,25 +175,16 @@ class BaseViewer(QLabel):
             self.image = self.image.astype(np.uint8)
 
 
-
     def boundary(self):
-        gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
-        self.mask = np.zeros((self.image.shape[0], self.image.shape[1]))
-        gray_image = cv2.medianBlur(gray, 21)
-        x, y = gray_image.shape[0] // self.window.number_of_parts, gray_image.shape[1] // self.window.number_of_parts
-        n=0
-        for i in range(self.window.number_of_parts):
-            for j in range(self.window.number_of_parts):
-                im = gray_image[x * i:x * (i + 1), y * j:y * (j + 1)]
-                ret, thresh1 = cv2.threshold(im, np.mean(int(round(np.mean(im)))), 255, cv2.THRESH_BINARY)
-                contours = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                cv2.drawContours(self.background[x * i:x * (i + 1), y * j:y * (j + 1)], contours[1], -1, (0, 255, 0), 1)
-                cv2.fillPoly(self.mask[x * i:x * (i + 1), y * j:y * (j + 1)], contours[1], (255, 255, 255), 1)
-                cv2.imwrite('test/test{}.png'.format(n), self.mask)
-                thresh1 = np.where(thresh1 == 255, thresh1, 111)  # 0 -> 111
-                thresh1 = np.where(thresh1 != 255, thresh1, 0)  # 255 -> 0
-                thresh1 = np.where(thresh1 != 111, thresh1, 255)
-                contours = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-                cv2.drawContours(self.background[x * i:x * (i + 1), y * j:y * (j + 1)], contours[1], -1, (0, 255, 0), 1)
-                n+=1
+        self.background = np.zeros(self.image.shape, dtype=np.uint8)
+        if self.window.denoise.isChecked():
+            image = cv2.medianBlur(self.image_orig, 25)
+        else:
+            image = self.image_orig
+        image_slic = seg.slic(image, n_segments=self.window.number_of_parts) * 255 // self.window.number_of_parts
+        boundaries = seg.find_boundaries(image_slic, mode='outer').astype(np.uint8) * 255
+        for i in range(3):
+            self.background[:, :, i] = boundaries
+
+
 

@@ -14,7 +14,7 @@ class Window(QWidget):
 
         self.image_path = None
         self.transp = 10
-        self.number_of_parts = 3
+        self.number_of_parts = 48
 
         self.viewer = DoubleViewer(self)
         self.viewer.setUpdatesEnabled(True)
@@ -144,6 +144,7 @@ class Window(QWidget):
         if utils.check_image_path(str(new_image_path)):
             #image_name = new_image_path.split('/')[-1].split('.')[0]
             self.viewer.setPhoto(utils.load_image(new_image_path))
+            self.viewer.boundary()
             self.viewer.update()
 
     def clear(self):
@@ -162,21 +163,21 @@ class Window(QWidget):
         if self.image_path is None:
             pass
         else:
-            self.viewer.setPhoto(utils.load_image(self.image_path))
+            self.viewer.updatePhoto(utils.load_image(self.image_path))
             self.viewer.update()
 
 
     def reduce_transp(self):
         if self.transp < 100:
             self.transp += 10
-            self.viewer.setPhoto(utils.load_image(self.image_path))
+            self.viewer.updatePhoto(utils.load_image(self.image_path))
             self.viewer.update()
 
 
     def increase_transp(self):
         if self.transp > 0:
             self.transp -= 10
-            self.viewer.setPhoto(utils.load_image(self.image_path))
+            self.viewer.updatePhoto(utils.load_image(self.image_path))
             self.viewer.update()
 
 
@@ -184,18 +185,20 @@ class Window(QWidget):
         if self.image_path is None:
             pass
         else:
-            self.viewer.setPhoto(utils.load_image(self.image_path))
+            self.viewer.updatePhoto(utils.load_image(self.image_path))
             self.viewer.update()
 
 
     def reduce_bound(self):
         if self.number_of_parts > 1:
-                self.number_of_parts -= 1
+                self.number_of_parts //= 2
+                self.viewer.boundary()
                 self.show_boundary()
 
 
     def increase_bound(self):
-        self.number_of_parts += 1
+        self.number_of_parts *= 2
+        self.viewer.boundary()
         self.show_boundary()
 
 
@@ -217,36 +220,20 @@ if __name__ == '__main__':
 
 
 '''
-
-
 import numpy as np
 import cv2
+import skimage.segmentation as seg
 
+image = cv2.imread('1.jpeg')
+image = cv2.medianBlur(image, 25)
+number_of_segments = 24
+image_slic = seg.slic(image, n_segments = number_of_segments) * 255 // number_of_segments
+print(np.unique(image_slic))
+cv2.imwrite('test.png', image_slic)
+boundaries = seg.find_boundaries(image_slic,  mode='outer').astype(np.uint8) * 255
+print(np.unique(boundaries), boundaries.shape)
+cv2.imwrite('boundaries.png', boundaries)
 
-def boundary(image, number_of_parts):
-    gray = cv2.imread("IMG_1942.jpeg", 0)
-    gray_image = cv2.medianBlur(gray, 21)
-    x, y = gray_image.shape[0] // number_of_parts, gray_image.shape[1] // number_of_parts
-    n = 0
-    for i in range(number_of_parts):
-        for j in range(number_of_parts):
-            im = gray_image[x*i:x*(i+1), y*j:y*(j+1)]
-            print(im.shape)
-            #cv2.imwrite('test/a{}.png'.format(n), im)
-            ret, thresh1 = cv2.threshold(im, np.mean(int(round(np.mean(im)))), 255, cv2.THRESH_BINARY)
-            #cv2.imwrite('test/a{}.png'.format(n), thresh1)
-            contours = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(image[x*i:x*(i+1), y*j:y*(j+1)], contours[1], -1, (0, 255, 0), 1)
-            thresh1 = np.where(thresh1 == 255, thresh1, 111)  # 0 -> 111
-            thresh1 = np.where(thresh1 != 255, thresh1, 0) # 255 -> 0
-            thresh1 = np.where(thresh1 != 111, thresh1, 255)
-            contours = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            cv2.drawContours(image[x * i:x * (i + 1), y * j:y * (j + 1)], contours[1], -1, (0, 255, 0), 1)
-            n += 1
-    cv2.imwrite('test/im.png', image)
-
-image = cv2.imread("IMG_1942.jpeg")
-number_of_parts = 25
-boundary(image, number_of_parts)
 '''
+
 

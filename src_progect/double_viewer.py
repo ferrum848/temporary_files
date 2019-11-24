@@ -21,8 +21,16 @@ class DoubleViewer(QLabel):
         self.setLayout(layout)
 
 
-    def setPhoto(self, image, image_name = None):
-        self.left_viewer.setPhoto(image, image_name, self.left_viewer)
+    def setPhoto(self, image):
+        self.left_viewer.setPhoto(image)
+        self.update()
+
+    def boundary(self):
+        self.left_viewer.boundary()
+
+
+    def updatePhoto(self, image):
+        self.left_viewer.updatePhoto(image)
         self.update()
 
 
