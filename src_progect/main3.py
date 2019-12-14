@@ -24,20 +24,20 @@ class Window(QWidget):
         self.btnLoad.setText('Load image')
         self.btnLoad.clicked.connect(self.loadImage)
 
-        self.btnClear = QToolButton()
-        self.btnClear.setText('Clear')
-        self.btnClear.clicked.connect(self.clear)
+        #self.btnClear = QToolButton()
+        #self.btnClear.setText('Clear')
+        #self.btnClear.clicked.connect(self.clear)
 
-        self.radio_image = QRadioButton("One object")
-        self.radio_image.setChecked(True)
-        self.radio_image.setEnabled(True)
-        self.radio_image_all = QRadioButton("All objects")
-        self.radio_image_all.setChecked(False)
-        self.radio_image_all.setEnabled(True)
+        self.add_zoom = QToolButton()
+        self.add_zoom.setText('+')
+        self.add_zoom.clicked.connect(self.increase_zoom)
+        self.decrease_zoom = QToolButton()
+        self.decrease_zoom.setText('-')
+        self.decrease_zoom.clicked.connect(self.reduce_zoom)
 
         select_wand = QHBoxLayout()
-        select_wand.addWidget(self.radio_image)
-        select_wand.addWidget(self.radio_image_all)
+        select_wand.addWidget(self.add_zoom)
+        select_wand.addWidget(self.decrease_zoom)
         zoom_group = QGroupBox("Zoom")
         zoom_group.setLayout(select_wand)
 
@@ -93,7 +93,7 @@ class Window(QWidget):
         tool_options.addWidget(self.image)
         tool_options.addWidget(self.increase_transparency)
         tool_options.addWidget(line_02)
-        tool_options.addWidget(self.btnClear)
+        #tool_options.addWidget(self.btnClear)
 
         options_group = QGroupBox("Options")
         options_group.setLayout(tool_options)
@@ -146,7 +146,7 @@ class Window(QWidget):
             self.viewer.setPhoto(utils.load_image(new_image_path))
             self.viewer.boundary()
             self.viewer.update()
-
+    '''
     def clear(self):
         if self.image_path is None:
             image_path = QMessageBox()
@@ -157,7 +157,7 @@ class Window(QWidget):
         else:
             self.viewer.setPhoto(utils.load_image(self.image_path))
             self.viewer.update()
-
+    '''
 
     def show_image(self):
         if self.image_path is None:
@@ -208,6 +208,12 @@ class Window(QWidget):
     def redo(self):
         pass
 
+    def increase_zoom(self):
+        pass
+
+    def reduce_zoom(self):
+        pass
+
 
 
 
@@ -217,23 +223,30 @@ if __name__ == '__main__':
     window = Window()
     window.showMaximized()
     sys.exit(app.exec_())
-
+#http://kyamagu.github.io/js-segment-annotator/?view=edit&id=1
 
 '''
 import numpy as np
 import cv2
 import skimage.segmentation as seg
 
+
 image = cv2.imread('1.jpeg')
 image = cv2.medianBlur(image, 25)
 number_of_segments = 24
 image_slic = seg.slic(image, n_segments = number_of_segments) * 255 // number_of_segments
-print(np.unique(image_slic))
-cv2.imwrite('test.png', image_slic)
+#print(np.unique(image_slic))
+#cv2.imwrite('test.png', image_slic)
 boundaries = seg.find_boundaries(image_slic,  mode='outer').astype(np.uint8) * 255
 print(np.unique(boundaries), boundaries.shape)
 cv2.imwrite('boundaries.png', boundaries)
 
+from enum import Enum
+class Test(Enum):
+    background = 1
+    GREEN = 2
+    BLUE = 3
+print(Test.background.name, type(Test.background.name))
 '''
 
 

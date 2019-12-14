@@ -9,6 +9,7 @@ import numpy as np
 import utils, time
 from base_viewer import BaseViewer
 from main_function import main_function
+from enum import Enum
 
 
 class PhotoViewer(BaseViewer):
@@ -28,9 +29,30 @@ class PhotoViewer(BaseViewer):
         super().mousePressEvent(event)
         if event.buttons() == Qt.LeftButton:
             if self.image is not None:
+                class Color(Enum):
+                    background = (0, 0, 0)
+                    green = (0, 255, 0)
+                    blue = (255, 0, 0)
+                    yellow = (0, 255, 255)
+                    black = (1, 1, 1)
+                    red = (0, 0, 255)
+                for color in Color:
+                    if color.name == self.window.selection_criterion.currentText():
+                        current_color = color.value
                 cursor_coord_x, cursor_coord_y = self.widget_to_img_pos(event.pos().x(), event.pos().y())
-                start_point = (cursor_coord_x, cursor_coord_y)
-                print(start_point)
+                target_pixel = self.image_slic[cursor_coord_y][cursor_coord_x]
+                current_image_slic = np.where(self.image_slic == target_pixel, self.image_slic, 0) // target_pixel
+                current_image_slic_3 = np.zeros(self.image.shape, dtype=np.uint8)
+                for i in range(3):
+                    current_image_slic_3[:, :, i] = current_image_slic
+                    self.image_trimap[:, :, i] = self.image_trimap[:, :, i] + current_image_slic
+                color_mask = (current_color * current_image_slic_3).astype(np.uint8)
+                self.image_trimap = self.image_trimap + color_mask
+                self.updatePhoto(self.image_orig)
+                self.update()
+                #print(np.unique(current_image_slic))
+
+
                 #============================================================================================
 
                 #image_bytes = self.image.tobytes()
@@ -47,6 +69,8 @@ class PhotoViewer(BaseViewer):
                     pass
 
 
+
+    '''
     def find_countur_of_threshold(self, start_point, gray_image):
         x, y = start_point
         start_pixel = gray_image[y][x]
@@ -112,6 +136,7 @@ class PhotoViewer(BaseViewer):
             elif selection_criterion == 'saturation':
                 gray_image = temp_image[:, :, 2]
         return gray_image
+    '''
 
 
 

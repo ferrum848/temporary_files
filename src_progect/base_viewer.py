@@ -9,6 +9,7 @@ import math
 import skimage.segmentation as seg
 
 
+
 class BaseViewer(QLabel):
     # Signals
     zoom_changed: pyqtSignal = pyqtSignal([tuple, list])
@@ -24,6 +25,7 @@ class BaseViewer(QLabel):
         self.res_image = None
         self.image_name = None
         self.start_photo = None
+        self.image_slic = None
 
 
     def paintEvent(self, event):
@@ -181,8 +183,8 @@ class BaseViewer(QLabel):
             image = cv2.medianBlur(self.image_orig, 25)
         else:
             image = self.image_orig
-        image_slic = seg.slic(image, n_segments=self.window.number_of_parts) * 255 // self.window.number_of_parts
-        boundaries = seg.find_boundaries(image_slic, mode='outer').astype(np.uint8) * 255
+        self.image_slic = seg.slic(image, n_segments=self.window.number_of_parts) * 255 // self.window.number_of_parts
+        boundaries = seg.find_boundaries(self.image_slic, mode='outer').astype(np.uint8) * 255
         for i in range(3):
             self.background[:, :, i] = boundaries
 
