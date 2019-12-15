@@ -28,6 +28,7 @@ class BaseViewer(QLabel):
         self.image_slic = None
 
 
+
     def paintEvent(self, event):
         if self.image is not None:
             painter = QPainter(self)
@@ -130,6 +131,9 @@ class BaseViewer(QLabel):
         self.image_trimap = np.ones(self.image.shape, dtype=np.uint8) * 255
         self.contruct_visualization_image()
         self.count_hw_pos(-5, 0, 0) # init fields
+        self.stack = [self.image_trimap.copy()]
+        self.undo_key = 0
+        self.during_stack_index = 0
 
 
     def updatePhoto(self, image):
@@ -187,6 +191,32 @@ class BaseViewer(QLabel):
         boundaries = seg.find_boundaries(self.image_slic, mode='outer').astype(np.uint8) * 255
         for i in range(3):
             self.background[:, :, i] = boundaries
+
+
+    def save_mask(self, save_path):
+        try:
+            if self.image_trimap:
+                cv2.imwrite(save_path, self.image_trimap)
+        except AttributeError:
+            pass
+
+
+    def undo(self):
+        if self.undo_key + 1 < len(self.stack):
+            self.during_stack_index = len(self.stack) - 2 - self.undo_key
+            self.image_trimap = self.stack[self.during_stack_index]
+            self.undo_key += 1
+            self.updatePhoto(self.image_orig)
+            self.update()
+
+
+    def redo(self):
+        if self.undo_key >= -1 and self.during_stack_index + 1 < len(self.stack):
+            self.image_trimap = self.stack[self.during_stack_index + 1]
+            self.during_stack_index += 1
+            self.undo_key -= 1
+            self.updatePhoto(self.image_orig)
+            self.update()
 
 
 

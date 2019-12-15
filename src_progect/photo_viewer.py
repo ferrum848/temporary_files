@@ -30,7 +30,7 @@ class PhotoViewer(BaseViewer):
         if event.buttons() == Qt.LeftButton:
             if self.image is not None:
                 class Color(Enum):
-                    background = (0, 0, 0)
+                    background = (255, 255, 255)
                     green = (0, 255, 0)
                     blue = (255, 0, 0)
                     yellow = (0, 255, 255)
@@ -41,17 +41,35 @@ class PhotoViewer(BaseViewer):
                         current_color = color.value
                 cursor_coord_x, cursor_coord_y = self.widget_to_img_pos(event.pos().x(), event.pos().y())
                 target_pixel = self.image_slic[cursor_coord_y][cursor_coord_x]
-                current_image_slic = np.where(self.image_slic == target_pixel, self.image_slic, 0) // target_pixel
+                if target_pixel == 0:
+                    current_image_slic = np.where(self.image_slic == target_pixel, self.image_slic, 777)
+                    current_image_slic = np.where(current_image_slic != target_pixel, current_image_slic, 1)
+                    current_image_slic = np.where(current_image_slic == 1, current_image_slic, 0)
+                else:
+                    current_image_slic = np.where(self.image_slic == target_pixel, self.image_slic, 0) // target_pixel
+                temp_trimap = self.image_trimap[cursor_coord_y][cursor_coord_x]
                 current_image_slic_3 = np.zeros(self.image.shape, dtype=np.uint8)
+
+                if temp_trimap[0] != 255 or temp_trimap[1] != 255 or temp_trimap[2] != 255:
+                    self.image_trimap = self.image_trimap.astype(np.int32)
+                    for i in range(3):
+                        self.image_trimap[:, :, i] = self.image_trimap[:, :, i] + current_image_slic * 255
+                        self.image_trimap[:, :, i] = np.where(self.image_trimap[:, :, i] < 255,
+                                                              self.image_trimap[:, :, i], 255)
+                    self.image_trimap = self.image_trimap.astype(np.uint8)
+
                 for i in range(3):
                     current_image_slic_3[:, :, i] = current_image_slic
                     self.image_trimap[:, :, i] = self.image_trimap[:, :, i] + current_image_slic
+
                 color_mask = (current_color * current_image_slic_3).astype(np.uint8)
                 self.image_trimap = self.image_trimap + color_mask
+                trimap_for_stack = self.image_trimap.copy()
+                self.stack.append(trimap_for_stack)
+                if len(self.stack) > 10:
+                    self.stack = self.stack[1:]
                 self.updatePhoto(self.image_orig)
                 self.update()
-                #print(np.unique(current_image_slic))
-
 
                 #============================================================================================
 

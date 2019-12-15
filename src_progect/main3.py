@@ -120,6 +120,9 @@ class Window(QWidget):
         color_group = QGroupBox("Color option")
         color_group.setLayout(color_option)
 
+        self.btnSave = QToolButton()
+        self.btnSave.setText('Save mask')
+        self.btnSave.clicked.connect(self.save_mask)
 
         # instruments panel
         instrument_layout = QHBoxLayout()
@@ -128,6 +131,7 @@ class Window(QWidget):
         instrument_layout.addWidget(edit_group)
         instrument_layout.addWidget(color_group)
         instrument_layout.addWidget(self.btnLoad)
+        instrument_layout.addWidget(self.btnSave)
         instrument_layout.addStretch(10000)
 
         # Arrange layout
@@ -141,11 +145,20 @@ class Window(QWidget):
     def loadImage(self):
         new_image_path = QFileDialog.getOpenFileName(self, "Pick an image")[0]
         self.image_path = new_image_path
+        print(new_image_path)
         if utils.check_image_path(str(new_image_path)):
             #image_name = new_image_path.split('/')[-1].split('.')[0]
             self.viewer.setPhoto(utils.load_image(new_image_path))
             self.viewer.boundary()
             self.viewer.update()
+
+
+    def save_mask(self):
+        save_path = QFileDialog.getSaveFileName(self, "Save mask as:")[0]
+        print('save_path = ', save_path)
+        self.viewer.save_mask(save_path)
+
+
     '''
     def clear(self):
         if self.image_path is None:
@@ -203,13 +216,16 @@ class Window(QWidget):
 
 
     def undo(self):
-        pass
+        self.viewer.undo()
+
 
     def redo(self):
-        pass
+        self.viewer.redo()
+
 
     def increase_zoom(self):
         pass
+
 
     def reduce_zoom(self):
         pass
@@ -248,5 +264,4 @@ class Test(Enum):
     BLUE = 3
 print(Test.background.name, type(Test.background.name))
 '''
-
 

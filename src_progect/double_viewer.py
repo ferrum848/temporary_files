@@ -34,6 +34,18 @@ class DoubleViewer(QLabel):
         self.update()
 
 
+    def save_mask(self, save_path):
+        self.left_viewer.save_mask(save_path)
+
+
+    def undo(self):
+        self.left_viewer.undo()
+
+
+    def redo(self):
+        self.left_viewer.redo()
+
+
 
 
 
