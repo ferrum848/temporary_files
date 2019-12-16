@@ -46,6 +46,10 @@ class DoubleViewer(QLabel):
         self.left_viewer.redo()
 
 
+    def change_color(self):
+        self.left_viewer.change_color()
+
+
 
 
 

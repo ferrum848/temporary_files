@@ -1,7 +1,7 @@
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-
+from enum import Enum
 import utils
 
 from double_viewer import DoubleViewer
@@ -114,9 +114,17 @@ class Window(QWidget):
         self.selection_criterion = QComboBox(self)
         self.selection_criterion.addItems(['background', 'green', 'blue', 'yellow', 'black', 'red'])
 
+        change_color = QToolButton()
+        change_color.setText('Change color to:')
+        change_color.clicked.connect(self.change_color)
+
+        self.change_criterion = QComboBox(self)
+        self.change_criterion.addItems(['background', 'green', 'blue', 'yellow', 'black', 'red'])
 
         color_option = QHBoxLayout()
         color_option.addWidget(self.selection_criterion)
+        color_option.addWidget(change_color)
+        color_option.addWidget(self.change_criterion)
         color_group = QGroupBox("Color option")
         color_group.setLayout(color_option)
 
@@ -231,6 +239,13 @@ class Window(QWidget):
         pass
 
 
+    def change_color(self):
+        if self.image_path is None:
+            pass
+        else:
+            self.viewer.change_color()
+
+
 
 
 if __name__ == '__main__':
@@ -264,4 +279,3 @@ class Test(Enum):
     BLUE = 3
 print(Test.background.name, type(Test.background.name))
 '''
-

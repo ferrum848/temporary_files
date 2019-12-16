@@ -7,7 +7,7 @@ import numpy as np
 import utils
 import math
 import skimage.segmentation as seg
-
+from enum import Enum
 
 
 class BaseViewer(QLabel):
@@ -134,7 +134,8 @@ class BaseViewer(QLabel):
         self.stack = [self.image_trimap.copy()]
         self.undo_key = 0
         self.during_stack_index = 0
-
+        self.colors = Enum(value='', names=[('background', (255, 255, 255)), ('green', (0, 255, 0)), ('blue', (255, 0, 0)),
+                                       ('yellow', (0, 255, 255)), ('black', (1, 1, 1)), ('red', (0, 0, 255))])
 
     def updatePhoto(self, image):
         self.image = image
@@ -217,6 +218,18 @@ class BaseViewer(QLabel):
             self.undo_key -= 1
             self.updatePhoto(self.image_orig)
             self.update()
+
+
+    def change_color(self):
+        current_color = self.colors[self.window.selection_criterion.currentText()].value
+        new_color = self.colors[self.window.change_criterion.currentText()].value
+        self.image_trimap[np.where((self.image_trimap == current_color).all(axis=2))] = new_color
+        trimap_for_stack = self.image_trimap.copy()
+        self.stack.append(trimap_for_stack)
+        if len(self.stack) > 10:
+            self.stack = self.stack[1:]
+        self.updatePhoto(self.image_orig)
+        self.update()
 
 
 
